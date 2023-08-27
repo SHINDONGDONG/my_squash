@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:my_squash/screens/navigation.dart';
 import 'package:my_squash/util/public_widgets/appbar_widget.dart';
 import 'package:my_squash/util/public_widgets/drawer_widget.dart';
 

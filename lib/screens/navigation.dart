@@ -4,7 +4,8 @@ import 'package:my_squash/screens/search/search.dart';
 import 'package:my_squash/screens/settings/settings.dart';
 
 class Navigation extends StatefulWidget {
-  const Navigation({Key? key}) : super(key: key);
+  const Navigation({Key? key, this.index}) : super(key: key);
+  final int? index;
 
   @override
   State<Navigation> createState() => _NavigationState();
@@ -26,7 +27,7 @@ class _NavigationState extends State<Navigation> {
         destinations: [
           NavigationDestination(
             icon: Icon(Icons.home),
-            label: "Home",
+            label: "ホーム",
             selectedIcon: Icon(
               Icons.home,
               color: Theme.of(context).colorScheme.onSecondaryContainer,
@@ -34,7 +35,7 @@ class _NavigationState extends State<Navigation> {
           ),
           NavigationDestination(
             icon: Icon(Icons.search),
-            label: "Search",
+            label: "検索",
             selectedIcon: Icon(
               Icons.search,
               color: Theme.of(context).colorScheme.onSecondaryContainer,
@@ -42,7 +43,7 @@ class _NavigationState extends State<Navigation> {
           ),
           NavigationDestination(
             icon: Icon(Icons.settings),
-            label: "Settings",
+            label: "設定",
             selectedIcon: Icon(
               Icons.settings,
               color: Theme.of(context).colorScheme.onSecondaryContainer,
@@ -54,7 +55,7 @@ class _NavigationState extends State<Navigation> {
       ),
       body: Center(
         child: IndexedStack(
-          index: selectedIndex,
+          index: widget.index ==null ? selectedIndex:widget.index,
           children: [
             HomePage(),
             SearchPage(),
