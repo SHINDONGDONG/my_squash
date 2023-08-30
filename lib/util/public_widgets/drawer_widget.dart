@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:my_squash/screens/home/home.dart';
 import 'package:my_squash/screens/navigation.dart';
-import 'package:my_squash/screens/search/search.dart';
 import 'package:my_squash/screens/settings/settings.dart';
 
 class CustomDrawer extends StatelessWidget {
@@ -87,9 +86,27 @@ class CustomDrawer extends StatelessWidget {
           const Divider(),
           ListTile(
             leading: const Icon(
-              Icons.logout,
+              Icons.settings,
             ),
-            title: const Text("ログアウト"),
+            title: const Text("設定"),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SettingsPage(),
+              ),
+            ),
+          ),
+          ListTile(
+            leading: Icon(
+              Icons.logout,
+              color: Colors.red.shade400,
+            ),
+            title: Text(
+              "ログアウト",
+              style: TextStyle(
+                color: Colors.red.shade400,
+              ),
+            ),
             onTap: () => Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
