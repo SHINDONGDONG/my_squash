@@ -23,17 +23,94 @@ class _ScorePageState extends State<ScorePage> with AutomaticKeepAliveClientMixi
   int _defaultScore = 11;
   final TextEditingController _homeName = TextEditingController();
   final TextEditingController _awayName = TextEditingController();
+  int _homeScore = 0;
+  int _awayScore = 0;
+  int _homeSetScore = 0;
+  int _awaySetScore = 0;
+  bool _isTie_break = false;
 
   @override
   Widget build(BuildContext context) {
 
+    void SetScore({required bool isHome}) {
+      setState(() {
+        if (isHome) {
+          //homeの時
+          _homeScore = _homeScore + 1;
+          //たい宣言
+          if (_isTie_break && (_homeScore - _awayScore).abs() == 2) {
+            _homeScore = 0;
+            _awayScore = 0;
+            _homeSetScore = _homeSetScore + 1;
+            _isTie_break = false;
+
+          } else if(_isTie_break && (_homeScore - _awayScore).abs() < 1){
+
+          } else if (!_isTie_break && _homeScore >= _defaultScore) {
+            _homeScore = 0;
+            _awayScore = 0;
+            _homeSetScore = _homeSetScore + 1;
+            _isTie_break = false;
+          }
+        }
+        //awayの時
+        else {
+          _awayScore = _awayScore + 1;
+          if (_isTie_break && (_awayScore - _homeScore).abs() == 2) {
+            _homeScore = 0;
+            _awayScore = 0;
+            _awaySetScore = _awaySetScore + 1;
+            _isTie_break = false;
+          } else if(_isTie_break && (_homeScore - _awayScore).abs() < 1){
+
+          } else if (!_isTie_break && _awayScore >= _defaultScore) {
+            _homeScore = 0;
+            _awayScore = 0;
+            _awaySetScore = _awaySetScore + 1;
+            _isTie_break = false;
+          }
+        }
+      });
+      if (_homeScore == _awayScore && _defaultScore - 1 == _homeScore && _defaultScore - 1 == _awayScore) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Tie Break'),
+            content: Text('タイブレークを実施しますか？'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  setState(() {
+                    _isTie_break = false;
+                  });
+
+                },
+                child: Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  setState(() {
+                    _isTie_break = true;
+                  });
+                },
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+    }
 
     return Scaffold(
       appBar: CustomAppBarWidget(
-        title: 'スコア',
+        title: isSetting ? '${_homeSetScore} : ${_awaySetScore}'
+            :'スコア',
       ),
       drawer: CustomDrawer(),
       body: isSetting ? Container(
+        padding: EdgeInsets.all(10.w),
         color: Colors.white,
         child: Row(
           children: [
@@ -60,10 +137,12 @@ class _ScorePageState extends State<ScorePage> with AutomaticKeepAliveClientMixi
                     height: 130.h,
                     minWidth: 130.w,
                     color: Colors.blue,
+                    highlightColor: Colors.transparent,
+                    splashColor: Colors.transparent,
                     onPressed: () {},
                     shape: CircleBorder(),
                     child: Text(
-                      "1",
+                      '${_homeScore}',
                       style: TextStyle(
                           fontSize: 24.sp,
                           color: Colors.white,
@@ -75,7 +154,9 @@ class _ScorePageState extends State<ScorePage> with AutomaticKeepAliveClientMixi
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          SetScore(isHome: true);
+                        },
                         child: Text("L"),
                         style: ElevatedButton.styleFrom(
                           elevation: 0,
@@ -84,7 +165,9 @@ class _ScorePageState extends State<ScorePage> with AutomaticKeepAliveClientMixi
                         ),
                       ),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          SetScore(isHome: true);
+                        },
                         child: Text("R"),
                         style: ElevatedButton.styleFrom(
                           elevation: 0,
@@ -110,7 +193,9 @@ class _ScorePageState extends State<ScorePage> with AutomaticKeepAliveClientMixi
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        SetScore(isHome: true);
+                      },
                       child: Text("STORKE"),
                       style: ElevatedButton.styleFrom(
                         elevation: 0,
@@ -122,7 +207,9 @@ class _ScorePageState extends State<ScorePage> with AutomaticKeepAliveClientMixi
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        SetScore(isHome: !true);
+                      },
                       child: Text("NO LET"),
                       style: ElevatedButton.styleFrom(
                         elevation: 0,
@@ -170,10 +257,12 @@ class _ScorePageState extends State<ScorePage> with AutomaticKeepAliveClientMixi
                     height: 130.h,
                     minWidth: 130.w,
                     color: Colors.green,
-                    onPressed: () {},
+                    onPressed: (){},
+                    highlightColor: Colors.transparent,
+                    splashColor: Colors.transparent,
                     shape: CircleBorder(),
                     child: Text(
-                      "12",
+                      '${_awayScore}',
                       style: TextStyle(
                           fontSize: 24.sp,
                           color: Colors.white,
@@ -185,7 +274,9 @@ class _ScorePageState extends State<ScorePage> with AutomaticKeepAliveClientMixi
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          SetScore(isHome: false);
+                        },
                         child: Text("L"),
                         style: ElevatedButton.styleFrom(
                           elevation: 0,
@@ -194,7 +285,9 @@ class _ScorePageState extends State<ScorePage> with AutomaticKeepAliveClientMixi
                         ),
                       ),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          SetScore(isHome: false);
+                        },
                         child: Text("R"),
                         style: ElevatedButton.styleFrom(
                           elevation: 0,
@@ -220,7 +313,9 @@ class _ScorePageState extends State<ScorePage> with AutomaticKeepAliveClientMixi
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        SetScore(isHome: false);
+                      },
                       child: Text("STORKE"),
                       style: ElevatedButton.styleFrom(
                         elevation: 0,
@@ -232,7 +327,9 @@ class _ScorePageState extends State<ScorePage> with AutomaticKeepAliveClientMixi
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        SetScore(isHome: !false);
+                      },
                       child: Text("NO LET"),
                       style: ElevatedButton.styleFrom(
                         elevation: 0,
@@ -356,6 +453,7 @@ class _ScorePageState extends State<ScorePage> with AutomaticKeepAliveClientMixi
       ),
     );
   }
+
 
   @override
   // TODO: implement wantKeepAlive
