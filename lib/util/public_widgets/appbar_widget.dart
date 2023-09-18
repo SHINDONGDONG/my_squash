@@ -27,12 +27,12 @@ class CustomAppBarWidget extends StatelessWidget implements PreferredSizeWidget 
           ),
         ),
       ),
-      actions: [
-        Padding(
-          padding: EdgeInsets.only(right: 10.w),
-          child: const Icon(Icons.notifications_outlined),
-        ),
-      ],
+      // actions: [
+      //   Padding(
+      //     padding: EdgeInsets.only(right: 10.w),
+      //     child: const Icon(Icons.notifications_outlined),
+      //   ),
+      // ],
     );
   }
 }

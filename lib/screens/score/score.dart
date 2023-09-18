@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -7,17 +9,21 @@ import 'package:my_squash/util/public_widgets/appbar_widget.dart';
 import 'package:my_squash/util/public_widgets/drawer_widget.dart';
 import 'package:my_squash/widgets/score/score_text_input_widget.dart';
 import 'package:numberpicker/numberpicker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ScorePage extends StatefulWidget {
   const ScorePage({Key? key}) : super(key: key);
+
 
   @override
   State<ScorePage> createState() => _ScorePageState();
 }
 
 
-
 class _ScorePageState extends State<ScorePage> with AutomaticKeepAliveClientMixin{
+
+
+
   late bool isSetting = false;
   int _defaultSet = 3;
   int _defaultScore = 11;
@@ -28,21 +34,25 @@ class _ScorePageState extends State<ScorePage> with AutomaticKeepAliveClientMixi
   int _homeSetScore = 0;
   int _awaySetScore = 0;
   bool _isTie_break = false;
+  List<Map<String,dynamic>> scoreMap = [];
+  List<Map<String,dynamic>> scoreMapReversed = [];
 
   @override
   Widget build(BuildContext context) {
 
-    void SetScore({required bool isHome}) {
+    void SetScore({required String position,required bool isHome}) {
       setState(() {
         if (isHome) {
           //homeの時
-          _homeScore = _homeScore + 1;
+          position == "LET" ? null : _homeScore = _homeScore + 1;
+          scoreMap.add({'position': position, 'isHome': isHome});
           //たい宣言
           if (_isTie_break && (_homeScore - _awayScore).abs() == 2) {
             _homeScore = 0;
             _awayScore = 0;
             _homeSetScore = _homeSetScore + 1;
             _isTie_break = false;
+            scoreMap.clear();
 
           } else if(_isTie_break && (_homeScore - _awayScore).abs() < 1){
 
@@ -51,16 +61,19 @@ class _ScorePageState extends State<ScorePage> with AutomaticKeepAliveClientMixi
             _awayScore = 0;
             _homeSetScore = _homeSetScore + 1;
             _isTie_break = false;
+            scoreMap.clear();
           }
         }
         //awayの時
         else {
-          _awayScore = _awayScore + 1;
+          position == "LET" ? null : _awayScore = _awayScore + 1;
+          scoreMap.add({'position': position, 'isHome': isHome});
           if (_isTie_break && (_awayScore - _homeScore).abs() == 2) {
             _homeScore = 0;
             _awayScore = 0;
             _awaySetScore = _awaySetScore + 1;
             _isTie_break = false;
+            scoreMap.clear();
           } else if(_isTie_break && (_homeScore - _awayScore).abs() < 1){
 
           } else if (!_isTie_break && _awayScore >= _defaultScore) {
@@ -68,6 +81,7 @@ class _ScorePageState extends State<ScorePage> with AutomaticKeepAliveClientMixi
             _awayScore = 0;
             _awaySetScore = _awaySetScore + 1;
             _isTie_break = false;
+            scoreMap.clear();
           }
         }
       });
@@ -112,233 +126,311 @@ class _ScorePageState extends State<ScorePage> with AutomaticKeepAliveClientMixi
       body: isSetting ? Container(
         padding: EdgeInsets.all(10.w),
         color: Colors.white,
-        child: Row(
+        child: Column(
           children: [
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start,
+              child: Row(
                 children: [
-                  Container(
-                    child: Text(
-                      _homeName.text,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 16.sp),
-                    ),
-                  ),
-                  Container(
-                    child: Text(
-                      'Home',
-                      style: TextStyle(color: Colors.grey.shade600),
-                    ),
-                  ),
-                  Gap(20.h),
-                  MaterialButton(
-                    height: 130.h,
-                    minWidth: 130.w,
-                    color: Colors.blue,
-                    highlightColor: Colors.transparent,
-                    splashColor: Colors.transparent,
-                    onPressed: () {},
-                    shape: CircleBorder(),
-                    child: Text(
-                      '${_homeScore}',
-                      style: TextStyle(
-                          fontSize: 24.sp,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Gap(20.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          SetScore(isHome: true);
-                        },
-                        child: Text("L"),
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          backgroundColor: Colors.lightBlue.shade300,
-                          shape: RoundedRectangleBorder(),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          child: Text(
+                            _homeName.text,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16.sp),
+                          ),
                         ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          SetScore(isHome: true);
-                        },
-                        child: Text("R"),
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          backgroundColor: Colors.lightBlue.shade300,
-                          shape: RoundedRectangleBorder(),
+                        Container(
+                          child: Text(
+                            'Home',
+                            style: TextStyle(color: Colors.grey.shade600),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  Spacer(),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      child: Text("YES LET"),
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        backgroundColor: Colors.lightBlue.shade300,
-                        shape: RoundedRectangleBorder(),
-                      ),
+                        Gap(20.h),
+                        MaterialButton(
+                          height: 130.h,
+                          minWidth: 130.w,
+                          color: Colors.blue,
+                          highlightColor: Colors.transparent,
+                          splashColor: Colors.transparent,
+                          onPressed: () {},
+                          shape: CircleBorder(),
+                          child: Text(
+                            '${_homeScore}',
+                            style: TextStyle(
+                                fontSize: 24.sp,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Gap(20.h),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                _defaultSet <= _homeSetScore ? null : SetScore(isHome: true, position: 'L');
+                              },
+                              child: Text("L"),
+                              style: ElevatedButton.styleFrom(
+                                elevation: 0,
+                                backgroundColor: _defaultSet <= _homeSetScore ? Colors.grey : Colors.lightBlue.shade300,
+                                shape: RoundedRectangleBorder(),
+                              ),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                SetScore(isHome: true, position: 'R');
+                              },
+                              child: Text("R"),
+                              style: ElevatedButton.styleFrom(
+                                elevation: 0,
+                                backgroundColor: Colors.lightBlue.shade300,
+                                shape: RoundedRectangleBorder(),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Spacer(),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              SetScore(position: "LET", isHome: true);
+                            },
+                            child: Text("YES LET"),
+                            style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              backgroundColor: Colors.lightBlue.shade300,
+                              shape: RoundedRectangleBorder(),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              SetScore(isHome: true, position: 'ST');
+                            },
+                            child: Text("STROKE"),
+                            style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              backgroundColor: Colors.lightBlue.shade300,
+                              shape: RoundedRectangleBorder(),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              SetScore(isHome: !true, position: 'NO');
+                            },
+                            child: Text("NO LET"),
+                            style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              backgroundColor: Colors.lightBlue.shade300,
+                              shape: RoundedRectangleBorder(),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        SetScore(isHome: true);
+                  Expanded(
+                    child: ListView.builder(
+                      // shrinkWrap: true,
+                      reverse: true,
+                      itemCount: scoreMap.length,
+                      itemBuilder: (context, index) {
+                        final reversedMap = scoreMap.reversed;
+                        return Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10.w),
+                          child: Align(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20.w),
+                                  color: reversedMap.toList()[index]['isHome'] ?Colors.blue:Colors.green,
+                                ),
+                                padding: EdgeInsets.symmetric(vertical: 5.h,horizontal: 5.w),
+                                margin: EdgeInsets.only(bottom: 2.h),
+                                child: Container(
+                                  child: Row(
+                                    mainAxisAlignment: reversedMap.toList()[index]['isHome'] ? MainAxisAlignment.start : MainAxisAlignment.end,
+                                    children: [
+                                      Icon(reversedMap.toList()[index]['isHome'] ? Icons.check:null, color: Colors.white,),
+                                      Gap(10.w),
+                                      Container(
+                                            child: Text(
+                                              reversedMap.toList()[index]
+                                                  ['position'],
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                          ),
+                                      Gap(10.w),
+
+                                      Icon(reversedMap.toList()[index]['isHome'] ? null:Icons.check,color: Colors.white,),
+                                    ],
+                                  ),
+                                ),
+                              ),
+
+
+                            ),
+                        );
                       },
-                      child: Text("STORKE"),
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        backgroundColor: Colors.lightBlue.shade300,
-                        shape: RoundedRectangleBorder(),
-                      ),
                     ),
                   ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        SetScore(isHome: !true);
-                      },
-                      child: Text("NO LET"),
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        backgroundColor: Colors.lightBlue.shade300,
-                        shape: RoundedRectangleBorder(),
-                      ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          child: Text(
+                            _awayName.text,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16.sp),
+                          ),
+                        ),
+                        Container(
+                          child: Text(
+                            'Away',
+                            style: TextStyle(color: Colors.grey.shade600),
+                          ),
+                        ),
+                        Gap(20.h),
+                        MaterialButton(
+                          height: 130.h,
+                          minWidth: 130.w,
+                          color: Colors.green,
+                          onPressed: (){},
+                          highlightColor: Colors.transparent,
+                          splashColor: Colors.transparent,
+                          shape: CircleBorder(),
+                          child: Text(
+                            '${_awayScore}',
+                            style: TextStyle(
+                                fontSize: 24.sp,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Gap(20.h),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                SetScore(isHome: false, position: 'L');
+                              },
+                              child: Text("L"),
+                              style: ElevatedButton.styleFrom(
+                                elevation: 0,
+                                backgroundColor: Colors.lightGreen.shade300,
+                                shape: RoundedRectangleBorder(),
+                              ),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                SetScore(isHome: false, position: 'R');
+                              },
+                              child: Text("R"),
+                              style: ElevatedButton.styleFrom(
+                                elevation: 0,
+                                backgroundColor: Colors.lightGreen.shade300,
+                                shape: RoundedRectangleBorder(),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Spacer(),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              SetScore(position: "LET", isHome: false);
+                            },
+                            child: Text("YES LET"),
+                            style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              backgroundColor: Colors.lightGreen.shade300,
+                              shape: RoundedRectangleBorder(),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              SetScore(isHome: false, position: 'ST');
+                            },
+                            child: Text("STROKE"),
+                            style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              backgroundColor: Colors.lightGreen.shade300,
+                              shape: RoundedRectangleBorder(),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              SetScore(isHome: !false, position: 'NO');
+                            },
+                            child: Text("NO LET"),
+                            style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              backgroundColor: Colors.lightGreen.shade300,
+                              shape: RoundedRectangleBorder(),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: 100,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Align(
-                      alignment: index.isOdd ? Alignment.centerLeft : Alignment.centerRight,
-                      child: Text('Item $index'),
-                    ),
-                  );
-                },
-              ),
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                    child: Text(
-                      _awayName.text,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 16.sp),
-                    ),
-                  ),
-                  Container(
-                    child: Text(
-                      'Away',
-                      style: TextStyle(color: Colors.grey.shade600),
-                    ),
-                  ),
-                  Gap(20.h),
-                  MaterialButton(
-                    height: 130.h,
-                    minWidth: 130.w,
-                    color: Colors.green,
-                    onPressed: (){},
-                    highlightColor: Colors.transparent,
-                    splashColor: Colors.transparent,
-                    shape: CircleBorder(),
-                    child: Text(
-                      '${_awayScore}',
-                      style: TextStyle(
-                          fontSize: 24.sp,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Gap(20.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          SetScore(isHome: false);
-                        },
-                        child: Text("L"),
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          backgroundColor: Colors.lightGreen.shade300,
-                          shape: RoundedRectangleBorder(),
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          SetScore(isHome: false);
-                        },
-                        child: Text("R"),
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          backgroundColor: Colors.lightGreen.shade300,
-                          shape: RoundedRectangleBorder(),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Spacer(),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      child: Text("YES LET"),
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        backgroundColor: Colors.lightGreen.shade300,
-                        shape: RoundedRectangleBorder(),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        SetScore(isHome: false);
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  backgroundColor: Colors.orange.shade400,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.w),),
+                ),
+                onPressed: () {
+                  setState(() {
+                    _homeName.text = "";
+                    _awayName.text = "";
+                    scoreMap.clear();
+                  });
+                  isSetting = false;
+                  _defaultSet = 3;
+                  _defaultScore = 11;
+                  _homeScore = 0;
+                  _awayScore = 0;
+                  _homeSetScore = 0;
+                  _awaySetScore = 0;
+                  _isTie_break = false;
                       },
-                      child: Text("STORKE"),
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        backgroundColor: Colors.lightGreen.shade300,
-                        shape: RoundedRectangleBorder(),
-                      ),
-                    ),
+                child: Padding(
+                  padding: EdgeInsets.all(10.w),
+                  child: Text(
+                    "リセット",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18.sp),
                   ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        SetScore(isHome: !false);
-                      },
-                      child: Text("NO LET"),
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        backgroundColor: Colors.lightGreen.shade300,
-                        shape: RoundedRectangleBorder(),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ],
@@ -438,14 +530,44 @@ class _ScorePageState extends State<ScorePage> with AutomaticKeepAliveClientMixi
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0,
+                        backgroundColor: Colors.orange.shade400,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.w),),
+                      ),
                       onPressed: () {
                         setState(() {
-                          isSetting = !isSetting;
+                          if(_homeName.text.isEmpty || _awayName.text.isEmpty){
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text('エラー'),
+                                content: Text('選手の名前を入力してください。'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text('確認'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }else{
+                            isSetting = !isSetting;
+                          }
                         });
-                        print(_homeName.text);
-                        print(_awayName.text);
                       },
-                      child: Text("True"),
+                      child: Padding(
+                        padding: EdgeInsets.all(10.w),
+                        child: Text(
+                          "決定",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18.sp),
+                        ),
+                      ),
                     ),
                   )
                 ],
