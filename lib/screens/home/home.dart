@@ -3,7 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_squash/screens/home/court_list.dart';
+import 'package:my_squash/screens/home/players.dart';
 import 'package:my_squash/screens/home/rule.dart';
+import 'package:my_squash/screens/home/squash_video.dart';
+import 'package:my_squash/screens/home/tournament.dart';
 import 'package:my_squash/util/public_widgets/appbar_widget.dart';
 import 'package:my_squash/util/public_widgets/drawer_widget.dart';
 
@@ -141,7 +144,14 @@ class HomePage extends StatelessWidget {
                                 style: ElevatedButton.styleFrom(
                                     padding: EdgeInsets.zero
                                 ),
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const Tournament(),
+                                    ),
+                                  );
+                                },
                                 child: Text('大会'),
                               ),
                             ),
@@ -169,7 +179,14 @@ class HomePage extends StatelessWidget {
                                 style: ElevatedButton.styleFrom(
                                     padding: EdgeInsets.zero
                                 ),
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const SquashVideo(),
+                                    ),
+                                  );
+                                },
                                 child: Text('動画'),
                               ),
                             ),
@@ -197,7 +214,14 @@ class HomePage extends StatelessWidget {
                                 style: ElevatedButton.styleFrom(
                                     padding: EdgeInsets.zero
                                 ),
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const Players(),
+                                    ),
+                                  );
+                                },
                                 child: Text('選手'),
                               ),
                             ),

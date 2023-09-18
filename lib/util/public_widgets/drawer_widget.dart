@@ -4,9 +4,45 @@ import 'package:gap/gap.dart';
 import 'package:my_squash/screens/home/home.dart';
 import 'package:my_squash/screens/navigation.dart';
 import 'package:my_squash/screens/settings/settings.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
-class CustomDrawer extends StatelessWidget {
+class CustomDrawer extends StatefulWidget {
   const CustomDrawer({Key? key}) : super(key: key);
+
+  @override
+  State<CustomDrawer> createState() => _CustomDrawerState();
+}
+
+class _CustomDrawerState extends State<CustomDrawer> {
+
+  String name='';
+  late SharedPreferences preferences;
+
+  @override
+  void initState(){
+    // TODO: implement initState
+    super.initState();
+    init();
+    // remove();
+  }
+
+  Future remove() async{
+    preferences = await SharedPreferences.getInstance();
+    await preferences.remove('name');
+  }
+
+  Future init() async {
+    preferences = await SharedPreferences.getInstance();
+    String? name = preferences.getString('name');
+    if(name == null) {
+      final uuid = Uuid().v1();
+      preferences.setString('name', 'GUEST_${uuid.substring(0,6)}');
+      name = preferences.getString('name');
+    };
+      setState(()=>this.name = name!);
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,15 +50,15 @@ class CustomDrawer extends StatelessWidget {
       child: Column(
         children: [
           UserAccountsDrawerHeader(
-            accountName: const Text(
-              "Shin mincheol",
+            accountName: Text(
+              name,
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
             accountEmail: const Text(
-              "shinmame0129@gmail.com",
+              "",
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -31,8 +67,8 @@ class CustomDrawer extends StatelessWidget {
             currentAccountPicture: CircleAvatar(
               backgroundColor: Colors.white,
               child: ClipOval(
-                child: Image.network(
-                  'https://img.chelseafc.com/image/upload/f_auto,h_390,q_90/editorial/people/academy/2023-24/Maatsen_profile_headshot_23-24-removebg.png',
+                child: Image.asset(
+                  'assets/image/splash.png',
                 ),
               ),
             ),
@@ -57,18 +93,6 @@ class CustomDrawer extends StatelessWidget {
                   builder: (context) => const Navigation(),
                 ),
                 (route) => false),
-          ),
-          ListTile(
-            leading: const Icon(
-              Icons.account_circle,
-            ),
-            title: const Text("プロファイル"),
-            onTap: () => Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const HomePage(),
-                ),
-                    (route) => false),
           ),
           ListTile(
             leading: const Icon(

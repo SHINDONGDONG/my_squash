@@ -2,16 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:my_squash/util/public_widgets/appbar_widget.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-class CourtList extends StatefulWidget {
-  const CourtList({Key? key}) : super(key: key);
+class Players extends StatefulWidget {
+  const Players({Key? key}) : super(key: key);
 
   @override
-  State<CourtList> createState() => _CourtListState();
+  State<Players> createState() => _PlayersState();
 }
 
-class _CourtListState extends State<CourtList> {
-  // WebViewController controller = WebViewController()
-  //   ..loadRequest(Uri.parse('https://squash.or.jp/court/'));
+class _PlayersState extends State<Players> {
 
   late final WebViewController controller;
   var loading = 0;
@@ -35,13 +33,14 @@ class _CourtListState extends State<CourtList> {
         });
       }))
       ..loadRequest(
-        Uri.parse('https://squash.or.jp/court/'),
+        Uri.parse('https://squash.or.jp/national/top4/'),
       );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBarWidget(title: 'コートリスト',),
+      appBar: const CustomAppBarWidget(title: 'スカッシュ選手',),
       body: Stack(
         children: [
           WebViewWidget(

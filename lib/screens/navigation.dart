@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:my_squash/screens/home/home.dart';
-import 'package:my_squash/screens/profile/profile.dart';
 import 'package:my_squash/screens/score/score.dart';
 
 class Navigation extends StatefulWidget {
@@ -18,7 +17,6 @@ class _NavigationState extends State<Navigation> {
   var _pages = [
           HomePage(),
           ScorePage(),
-          ProfilePage(),
   ];
 
 
@@ -50,14 +48,6 @@ class _NavigationState extends State<Navigation> {
               color: Theme.of(context).colorScheme.onSecondaryContainer,
             ),
           ),
-          NavigationDestination(
-            icon: Icon(Icons.account_circle),
-            label: "プロファイル",
-            selectedIcon: Icon(
-              Icons.account_circle,
-              color: Theme.of(context).colorScheme.onSecondaryContainer,
-            ),
-          )
         ],
         //알약모양으로 셀렉트를 애니메이션
         animationDuration: const Duration(milliseconds:  500),
