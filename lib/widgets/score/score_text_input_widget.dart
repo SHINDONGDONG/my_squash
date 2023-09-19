@@ -16,20 +16,20 @@ class ScoreTextInputWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.w),
-        border: Border.all(color: color),
-        color: color.withOpacity(0.3),
+        // borderRadius: BorderRadius.circular(10.w),
+        // border: Border.all(color: color),
+        // color: color.withOpacity(0.3),
       ),
       padding: EdgeInsets.symmetric(horizontal: 8.w,vertical: 8.h),
       child: Column(
         children: [
-          Align(
-            child: Text(
-              HomeandAway,
-              style: TextStyle(color: Colors.black, fontSize: 20.sp),
-            ),
-            alignment: Alignment.center,
-          ),
+          // Align(
+          //   child: Text(
+          //     HomeandAway,
+          //     style: TextStyle(color: Colors.black, fontSize: 20.sp),
+          //   ),
+          //   alignment: Alignment.center,
+          // ),
           Gap(20.h),
           Align(
             child: TextField(
@@ -39,7 +39,7 @@ class ScoreTextInputWidget extends StatelessWidget {
                 prefixIconColor: Colors.grey.shade600,
                 hintText: 'ホーム選手名前',
                 hintStyle: TextStyle(color: Colors.grey.shade600,),
-                labelText: '名前',
+                labelText: HomeandAway,
                 labelStyle: TextStyle(
                   color: Colors.grey.shade600,
                 ),

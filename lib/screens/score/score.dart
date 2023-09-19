@@ -53,7 +53,37 @@ class _ScorePageState extends State<ScorePage> with AutomaticKeepAliveClientMixi
             _homeSetScore = _homeSetScore + 1;
             _isTie_break = false;
             scoreMap.clear();
-
+            if (_homeSetScore >= _defaultSet ||
+                _awaySetScore >= _defaultSet) {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text('ゲーム終了'),
+                  content: Text('${_homeName.text}さん、おめでとうございます。'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        setState(() {
+                          _homeName.text = "";
+                          _awayName.text = "";
+                          scoreMap.clear();
+                          isSetting = false;
+                          _defaultSet = 3;
+                          _defaultScore = 11;
+                          _homeScore = 0;
+                          _awayScore = 0;
+                          _homeSetScore = 0;
+                          _awaySetScore = 0;
+                          _isTie_break = false;
+                        });
+                      },
+                      child: Text('OK'),
+                    ),
+                  ],
+                ),
+              );
+            }
           } else if(_isTie_break && (_homeScore - _awayScore).abs() < 1){
 
           } else if (!_isTie_break && _homeScore >= _defaultScore) {
@@ -62,6 +92,37 @@ class _ScorePageState extends State<ScorePage> with AutomaticKeepAliveClientMixi
             _homeSetScore = _homeSetScore + 1;
             _isTie_break = false;
             scoreMap.clear();
+            if (_homeSetScore >= _defaultSet ||
+                _awaySetScore >= _defaultSet) {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text('ゲーム終了'),
+                  content: Text('${_homeName.text}さん、おめでとうございます。'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        setState(() {
+                          _homeName.text = "";
+                          _awayName.text = "";
+                          scoreMap.clear();
+                          isSetting = false;
+                          _defaultSet = 3;
+                          _defaultScore = 11;
+                          _homeScore = 0;
+                          _awayScore = 0;
+                          _homeSetScore = 0;
+                          _awaySetScore = 0;
+                          _isTie_break = false;
+                        });
+                      },
+                      child: Text('OK'),
+                    ),
+                  ],
+                ),
+              );
+            }
           }
         }
         //awayの時
@@ -74,6 +135,38 @@ class _ScorePageState extends State<ScorePage> with AutomaticKeepAliveClientMixi
             _awaySetScore = _awaySetScore + 1;
             _isTie_break = false;
             scoreMap.clear();
+            if (_homeSetScore >= _defaultSet ||
+                _awaySetScore >= _defaultSet) {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text('ゲーム終了'),
+                  content: Text('${_awayName.text}さん、おめでとうございます。'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        setState(() {
+                          _homeName.text = "";
+                          _awayName.text = "";
+                          scoreMap.clear();
+                          isSetting = false;
+                          _defaultSet = 3;
+                          _defaultScore = 11;
+                          _homeScore = 0;
+                          _awayScore = 0;
+                          _homeSetScore = 0;
+                          _awaySetScore = 0;
+                          _isTie_break = false;
+                        });
+                      },
+                      child: Text('OK'),
+                    ),
+                  ],
+                ),
+              );
+            }
+
           } else if(_isTie_break && (_homeScore - _awayScore).abs() < 1){
 
           } else if (!_isTie_break && _awayScore >= _defaultScore) {
@@ -82,6 +175,38 @@ class _ScorePageState extends State<ScorePage> with AutomaticKeepAliveClientMixi
             _awaySetScore = _awaySetScore + 1;
             _isTie_break = false;
             scoreMap.clear();
+            if (_homeSetScore >= _defaultSet ||
+                _awaySetScore >= _defaultSet) {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text('ゲーム終了'),
+                  content: Text('${_awayName.text}さん、おめでとうございます。'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        setState(() {
+                          _homeName.text = "";
+                          _awayName.text = "";
+                          scoreMap.clear();
+                          isSetting = false;
+                          _defaultSet = 3;
+                          _defaultScore = 11;
+                          _homeScore = 0;
+                          _awayScore = 0;
+                          _homeSetScore = 0;
+                          _awaySetScore = 0;
+                          _isTie_break = false;
+                        });
+                      },
+                      child: Text('OK'),
+                    ),
+                  ],
+                ),
+              );
+            }
+
           }
         }
       });
@@ -411,7 +536,6 @@ class _ScorePageState extends State<ScorePage> with AutomaticKeepAliveClientMixi
                     _homeName.text = "";
                     _awayName.text = "";
                     scoreMap.clear();
-                  });
                   isSetting = false;
                   _defaultSet = 3;
                   _defaultScore = 11;
@@ -420,6 +544,7 @@ class _ScorePageState extends State<ScorePage> with AutomaticKeepAliveClientMixi
                   _homeSetScore = 0;
                   _awaySetScore = 0;
                   _isTie_break = false;
+                  });
                       },
                 child: Padding(
                   padding: EdgeInsets.all(10.w),
@@ -439,10 +564,15 @@ class _ScorePageState extends State<ScorePage> with AutomaticKeepAliveClientMixi
         padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 30.h),
         child: Column(
                 children: [
-                  ScoreTextInputWidget(HomeandAway: 'Home', color: Colors.blue, controller: _homeName,),
+                  Text("選手情報入力",style: TextStyle(fontSize: 20.sp,fontWeight: FontWeight.w500),),
+                  Divider(),
+                  ScoreTextInputWidget(HomeandAway: 'ホーム', color: Colors.blue, controller: _homeName,),
+                  ScoreTextInputWidget(HomeandAway: 'アウェー', color: Colors.green, controller: _awayName,),
                   Gap(20.h),
-                  ScoreTextInputWidget(HomeandAway: 'Away', color: Colors.green, controller: _awayName,),
+                  Divider(),
+                  Gap(20.h),
                   Align(child: Text('セット'),alignment: Alignment.center,),
+                  Gap(10.h),
                   Stack(
                     alignment: Alignment.center,
                     children: [
@@ -484,7 +614,9 @@ class _ScorePageState extends State<ScorePage> with AutomaticKeepAliveClientMixi
                       ),alignment: Alignment.center,),
                     ],
                   ),
+                  Gap(20.h),
                   Align(child: Text('点まで'),alignment: Alignment.center,),
+                  Gap(10.h),
                   Stack(
                     alignment: Alignment.center,
                     children: [
