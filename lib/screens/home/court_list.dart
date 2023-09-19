@@ -10,8 +10,6 @@ class CourtList extends StatefulWidget {
 }
 
 class _CourtListState extends State<CourtList> {
-  // WebViewController controller = WebViewController()
-  //   ..loadRequest(Uri.parse('https://squash.or.jp/court/'));
 
   late final WebViewController controller;
   var loading = 0;
